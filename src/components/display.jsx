@@ -17,8 +17,8 @@ const Input = styled.input`
   }
 `;
 
-const Display = ({ display }) => {
-  return <Input readOnly={true} value={display === "" ? 0 : display}></Input>;
+const Display = ({ display, result }) => {
+  return <Input readOnly={true} value={result ? result : display}></Input>;
 };
 
 export default Display;

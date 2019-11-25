@@ -3,6 +3,10 @@ import NumPad from "./numPad";
 import Display from "./display";
 import styled from "styled-components";
 import phone from "../phone.png";
+import { create, all } from "mathjs";
+
+const config = {};
+const math = create(all, config);
 
 const Wrapper = styled.div`
   width: 250px;
@@ -22,23 +26,25 @@ const Wrapper = styled.div`
 
 class Calculator extends Component {
   state = {
-    display: ""
+    display: "0",
+    result: ""
   };
 
   handleClick = ({ currentTarget: input }) => {
-    let display = this.state.display;
+    let display = this.state.display.replace(/^[0{1,}+/*-]/gi, "");
+    this.setState({ result: "" });
     display += input.value;
-    this.setState({ display: display });
+    this.setState({ display });
   };
 
   handleReset = () => {
-    this.setState({ display: "" });
+    this.setState({ display: "0", result: "" });
   };
 
   handleEquals = () => {
     let display = this.state.display;
-    const result = eval(display);
-    this.setState({ display: +result });
+    const result = math.evaluate(display);
+    this.setState({ result: `${result}`, display: "0" });
   };
 
   handleErace = () => {
@@ -49,14 +55,17 @@ class Calculator extends Component {
 
   handleHundred = () => {
     let display = this.state.display;
-    let divided = eval(display / 100);
+    let divided = math.evaluate(display / 100);
     this.setState({ display: divided });
   };
 
   render() {
     return (
       <Wrapper>
-        <Display display={this.state.display}></Display>
+        <Display
+          display={this.state.display}
+          result={this.state.result}
+        ></Display>
         <NumPad
           onNumType={this.handleClick}
           onReset={this.handleReset}
